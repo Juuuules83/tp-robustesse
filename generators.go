@@ -1,58 +1,47 @@
 package main
 
-import (
-	"fmt"
-	"math/rand"
-)
+import "math/rand"
 
-var r = rand.New(rand.NewSource(69))
+var r = rand.New(rand.NewSource(42))
 
-// RandomScores renvoie n scores tirés au hasard entre 0 et 1 000.
-func RandomScores(n int) []int {
-	scores := make([]int, n)
-	for i := range scores {
-		scores[i] = r.Intn(1001)
+// Sorted renvoie les Kaplas numérotés de 1 à n, dans l'ordre.
+func Sorted(n int) []int {
+	pile := make([]int, n)
+	for i := range pile {
+		pile[i] = i + 1
 	}
-	return scores
+	return pile
 }
 
-// SortedScores renvoie n scores tous différents (0, 1, 2…), déjà rangés par ordre croissant.
-func SortedScores(n int) []int {
-	scores := make([]int, n)
-	for i := range scores {
-		scores[i] = i
-	}
-	return scores
+// Shuffled renvoie les Kaplas numérotés de 1 à n, mélangés.
+func Shuffled(n int) []int {
+	pile := Sorted(n)
+	r.Shuffle(n, func(i, j int) { pile[i], pile[j] = pile[j], pile[i] })
+	return pile
 }
 
-// ReversedScores renvoie n scores rangés par ordre décroissant (pire cas fréquent).
-func ReversedScores(n int) []int {
-	scores := SortedScores(n)
-	for i, j := 0, n-1; i < j; i, j = i+1, j-1 {
-		scores[i], scores[j] = scores[j], scores[i]
-	}
-	return scores
+// WithDuplicate renvoie les Kaplas de 1 à n mélangés,
+// puis une copie du numéro d placée en dernier (cas défavorable).
+func WithDuplicate(n, d int) []int {
+	return append(Shuffled(n), d)
 }
 
-// NearlySortedScores renvoie n scores rangés, dont environ 1 % ont été déplacés.
-func NearlySortedScores(n int) []int {
-	scores := SortedScores(n)
-	for k := 0; k < n/100; k++ {
-		i, j := r.Intn(n), r.Intn(n)
-		scores[i], scores[j] = scores[j], scores[i]
+// Random renvoie n Kaplas aux numéros tirés au hasard entre 1 et plafond.
+func Random(n, plafond int) []int {
+	pile := make([]int, n)
+	for i := range pile {
+		pile[i] = r.Intn(plafond) + 1
 	}
-	return scores
+	return pile
 }
 
-// RandomPlayers renvoie n joueurs nommés Joueur00001, Joueur00002…, dans l'ordre
-// d'arrivée, avec un score entre 0 et 100 : beaucoup de joueurs sont à égalité.
-func RandomPlayers(n int) []Score {
-	players := make([]Score, n)
-	for i := range players {
-		players[i] = Score{
-			Player: fmt.Sprintf("Joueur%05d", i+1),
-			Score:  r.Intn(101),
-		}
-	}
-	return players
+// WithTwins renvoie environ n Kaplas où chaque numéro a un jumeau,
+// sauf le dernier Kapla, seul de son numéro (cas défavorable).
+func WithTwins(n int) []int {
+	moitie := (n - 1) / 2
+	pile := append(Shuffled(moitie), Shuffled(moitie)...)
+	r.Shuffle(len(pile), func(i, j int) {
+		pile[i], pile[j] = pile[j], pile[i]
+	})
+	return append(pile, moitie+1)
 }

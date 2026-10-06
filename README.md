@@ -1,162 +1,105 @@
-# TP - Algorithmique de tri en GO<br>
---------------------------------------<br>
+# TP - Complexité algorithmique en GO<br>
+-------------------------------------<br>
 
-lien github : https://github.com/Juuuules83/tp-tris.git<br>
+lien github : https://github.com/Juuuules83/tp-kaplas.git<br>
 
---------------------------------------<br>
+-------------------------------------<br>
 
-## EX01 - Le tri à bulles :<br>
+## PB01 - Le plus petit kapla :<br>
 
-### Question : mesurez votre tri sur SortedScores(10 000), puis sur ReversedScores(10 000). Expliquez l'écart.<br>
-### Que se passerait-il si votre tri ne s'arrêtait pas après un passage sans échange ?<br>
+### Question : et si la pile était déjà rangée, quelle serait la complexité ?<br>
 
-Pour SortedScores(10 000), le tableau est déjà trié. Le tri fait donc un passage sans échange et s'arrête rapidement.
-Pour ReversedScores(10 000), le tableau est dans l'ordre inverse. Le tri doit effectuer beaucoup plus d'échanges et de passages, ce qui explique que le temps d'exécution soit beaucoup plus élevé.
-La complexité du tri à bulles est de O(n²) dans le pire cas. Pour un tableau déjà trié, elle est de O(n) grâce à l'arrêt après un passage sans échange.
-Si le tri ne s'arrêtait pas après un passage sans échange, il continuerait à parcourir le tableau alors qu'il est déjà trié. Il ferait donc des comparaisons inutiles et prendrait plus de temps.
+voici le résultat du benchmark V1 <br>
+-> ![alt text](image.png)<br>
 
-### Capture du benchmark :
+voici le résultat du benchmark V2 <br>
+-> ![alt text](image-5.png)<br>
 
-![alt image](image.png)
+nous sommes à un nombre d'opération de O(n) dans le pire cas<br>
+en raison du fait que c'est un slice que l'on parcours, <br>
+en revanche, la V2 permet de faire en sorte que si min est égal à 1 le programme s'arrête de parcourir le slice car "1" est le plus petit nombre possible<br>
 
-**Commande pour lancer le bench :**  
-`go test -bench=BubbleSort -benchmem -run='^$'`
+Nous ne pouvons pas dans la grande majorité des cas réduire à O(1), car le slice doit parcourir "n" nombre en fonction du nombre d'éléments présent dans le slice.<br>
+En revanche pour la V2, dans le cas où "1" serait le premier nombre du slice, donc que le slice est déjà ranger ou qu'il commence simplement par 1, cela serait bien O(1)<br>
 
---------------------------------------<br>
 
-## EX02 - Le tri par sélection :<br>
-
-### Question : mesurez votre tri sur RandomScores(10 000), SortedScores(10 000) et ReversedScores(10 000). Que constatez-vous, et pourquoi ? Comparez avec le tri à bulles.<br>
-
-Le tri par sélection effectue toujours une recherche du minimum dans la partie du tableau qui n'est pas encore triée.
-Même si le tableau est déjà trié ou dans l'ordre inverse, il doit continuer à parcourir les éléments pour chercher le minimum.
-Il a donc une complexité de O(n²) dans les différents cas.
-Contrairement au tri à bulles, il ne profite pas de l'arrêt anticipé lorsque le tableau est déjà trié.
-
-### Capture du benchmark :
-
-![alt image](image-1.png)
-
-**Commande pour lancer le bench :**  
-`go test -bench=SelectionSort -benchmem -run='^$'`
+**Commande pour lancer le bench V1 :** _go test -bench=SmallestV1 -benchmem -run='^$'_  <br>
+**Commande pour lancer le bench V2 :** _go test -bench=SmallestV2 -benchmem -run='^$'_  <br>
 
 --------------------------------------<br>
 
-## EX03 - Le tri par insertion :<br>
+## PB02 - Le Kapla en double :<br>
 
-### Question : mesurez BubbleSort et InsertionSort sur NearlySortedScores(100 000). Les deux tris sont en O(n²) dans le pire cas : pourquoi l'un est-il beaucoup plus rapide que l'autre sur des données presque triées ?<br>
+###  Question : si la pile contenait des numéros quelconques, laquelle de vos  versions fonctionnerait encore ? <br>
 
-Sur un tableau presque trié, InsertionSort est beaucoup plus rapide car il déplace seulement les éléments qui ne sont pas à leur place.
-BubbleSort doit effectuer plusieurs passages sur le tableau.
-On voit donc que deux algorithmes ayant la même complexité dans le pire cas peuvent avoir des performances très différentes selon les données utilisées.
+voici le résultat du benchmark V1<br>
+->  ![alt text](image-3.png)<br>
 
-### Capture du benchmark :
+voici le résultat du benchmark V2<br>
+-> ![alt text](image-4.png)<br>
 
-![alt image](image-2.png)
+ - Pour la version V1, O(n) on constate que la mémoire utilisée augmente proportionnellement à la valeur de "n", <br>
+cela passe d'environ 50 142 B/op pour 1000 éléments à plus de 4 632 566 B/op pour 100 000 éléments.<br>
+La V1 fonctionnerait encore avec des numéros quelconques, car elle vérifie simplement si un numéro a déjà été rencontré.<br>
 
-**Commande pour lancer le bench :**  
-`go test -bench=NearlySorted -benchmem -run='^$'`
+ - Pour la version V2, O(1) on constate que la mémoire utilisée reste constante à 0 allocs/op peu importe que "n" soit petit ou grand.<br>
+ La V2 ne fonctionnerait plus avec des numéros quelconques, car elle utilise la formule de la somme des nombres de 1 à n. <br>
+ Elle dépend donc du fait que la pile contienne tous les numéros de 1 à n avec un seul doublon.<br>
 
---------------------------------------<br>
 
-## EX04 - Le tri fusion :<br>
-
-### Question : comparez la colonne B/op du tri fusion à celle des tris précédents. D'où vient cette mémoire, et combien d'octets représente-t-elle pour 100 000 scores ?<br>
-
-MergeSort utilise beaucoup plus de mémoire que les tris précédents car il crée de nouveaux slices lors de la fusion.
-Pour 100 000 scores, le benchmark donne environ **14 057 809 B/op**.
-Les tris comme BubbleSort, SelectionSort et InsertionSort travaillent directement sur le tableau, alors que MergeSort crée des tableaux temporaires pour effectuer les fusions.
-
-### Capture du benchmark :
-
-![alt image](image-3.png)
-
-**Commande pour lancer le bench :**  
-`go test -bench=MergeSort -benchmem -run='^$'`
+**Commande pour lancer le bench V1 :** _go test -bench=DuplicateV1 -benchmem -run='^$'_  <br>
+**Commande pour lancer le bench V2 :** _go test -bench=DuplicateV2 -benchmem -run='^$'_  <br>
 
 --------------------------------------<br>
 
-## EX05 - Le tri rapide (bonus) :<br>
+## PB03 - La hauteur de la tour : <br>
 
-### Question : que se passe-t-il sur SortedScores(100 000) ? Proposez un meilleur choix de pivot, implémentez-le et mesurez le gain.<br>
+### Question : retrouvez-vous l'écart mesuré pendant la capsule ? Sinon, cherchez  pourquoi.<br>
+Voici le resultat du Benchamrk V1<br>
+-> ![alt text](image-1.png)<br>
 
-Avec QuickSort, le dernier élément est utilisé comme pivot.
-Sur un tableau déjà trié, le dernier élément est toujours le plus grand. Le tableau est donc très mal séparé à chaque étape.
-La complexité peut alors atteindre O(n²), ce qui explique le temps beaucoup plus élevé observé sur SortedScores(100 000).
-Un meilleur choix serait par exemple de choisir un pivot au milieu du tableau ou de choisir un pivot aléatoire.
+voici le résultat du benchmark V2<br>
+-> ![alt text](image-2.png)<br>
 
-### Capture du benchmark :
+ - Pour la version V1 O(n), on constate que le temps d'excution augmente de manière proportionnelle à la valeur de "n", <br>
+cela passe d'environ 230.9 ns/op pour 1000 éléments à plus de 24002 ns/op pour 100 000 éléments  <br>
 
-![alt image](image-4.png)
+- pour le version V2 O(1), on constate que le temps d'excution reste constant d'environ 0.1240 ns/op peu importe que "n" soit petit ou grand <br>
 
-**Commande pour lancer le bench :**  
-`go test -bench=QuickSort -benchmem -run='^$'`
 
---------------------------------------<br>
-
-## EX06 - Le grand comparatif :<br>
-
-### Résultats du benchmark :
-
-![alt text](image-8.png)
-
-### Question : à partir de quelle taille les tris en O(n log n) deviennent-ils nettement plus rapides que les tris en O(n²) ? Vos rapports ×10 confirment-ils les complexités annoncées ?<br>
-
-À partir de 10 000 éléments, les tris en O(n log n) deviennent déjà nettement plus rapides que les tris en O(n²).
-Les rapports ×10 montrent bien la différence entre les deux familles. Les tris en O(n²) augmentent beaucoup plus fortement, alors que les tris en O(n log n) restent beaucoup plus raisonnables.
-
-### Question : slices.Sort repose lui aussi sur un tri rapide. Pourquoi est-il plus rapide que votre QuickSort ?<br>
-
-`slices.Sort` est plus rapide car il s'agit d'une implémentation de la bibliothèque standard de Go, qui est optimisée pour les performances et gère mieux différents cas que notre implémentation simple de QuickSort.
-
-### Capture du benchmark :
-
-![alt image](image-5.png)
-
-**Commande pour lancer le bench :**  
-`go test -bench=AllSorts -benchmem -run='^$' -timeout 30m`
+**Commande pour lancer le bench V1 :** _go test -bench=TowerHeightV1 -benchmem -run='^$'_ <br>
+**Commande pour lancer le bench V2 :** _go test -bench=TowerHeightV2 -benchmem -run='^$'_ <br>
 
 --------------------------------------<br>
 
-## EX07 - Adapter le tri par insertion :<br>
+## PB04 - Retrouver un Kapla dans une ligne rangée : <br>
 
-### Question : comparez le temps avec celui d'InsertionSort sur RandomScores(n). Qu'est-ce qui change, et pourquoi ?<br>
+### Question : si la ligne n'était pas rangée, vaudrait-il la peine de la trier en O(n logn) pour une seule recherche ? Et pour 10 000 recherches ?<br>
+Voici le resultat du Benchamrk V1<br>
+-> ![alt text](image-7.png)<br>
 
-InsertionSortScores trie des structures `Score` au lieu de simples entiers.
-Sur 10 000 éléments, InsertionSortScores prend environ **13 983 107 ns/op**, ce qui est quasiment identique à InsertionSort sur 10 000 scores avec environ **13 983 529 ns/op**.
-La différence est donc très faible. Le tri reste en O(n²) et la comparaison se fait simplement sur le champ `Score`.
 
-### Capture du benchmark :
+ - la complexité est de O(n), car le programme parcourt la ligne jusqu'à trouver le numéro recherché.<br>
+ le numéro recherché est n+1, donc il n'est pas présent dans la ligne. Le programme doit donc parcourir toute la ligne.<br>
 
-![alt image](image-6.png)
+Pour une seule recherche, ça ne vaut pas le coup de trier la ligne, le tri en O(n log n) coûte plus cher qu'une simple recherche.<br>
+Pour 10 000 recherches, oui ça peut être bien de trier une seule fois pour les recherches suivantes.<br>
 
-**Commande pour lancer le bench :**  
-`go test -bench=InsertionSortScores -benchmem -run='^$'`
+
+**Commande pour lancer le bench V1 :** _go test -bench=SearchV1 -benchmem -run='^$'_ <br>
 
 --------------------------------------<br>
 
-## EX08 - Les ex æquo et la stabilité :<br>
+## PB05 - Compter les Kaplas par numéro : <br>
 
-### Question : lesquels de vos tris sont stables ? Expliquez, en rejouant l'exemple avec les cartes, pourquoi le tri par sélection ne l'est pas.<br>
+### Question : si le plafond restait fixé à 10, quelle serait la complexité de votre V1 ? Pourquoi ?<br>
+Voici le resultat du Benchamrk V1<br>
+-> ![alt text](image-6.png)<br>
 
-InsertionSortScores est stable car lorsqu'il y a deux joueurs avec le même score, leur ordre d'arrivée est conservé.
-SelectionSortScores n'est pas stable car il peut échanger directement deux éléments. Cet échange peut inverser l'ordre de deux joueurs ayant le même score.
+ - La complexité est de O(n). On constate que le temps d'exécution augmente lorsque la valeur de "n" augmente.
+Cela passe d'environ 1 797 ns/op pour 1 000 éléments à 177 984 ns/op pour 100 000 éléments.<br>
 
-Avec l'exemple :
+La mémoire utilisée augmente avec "n", car le programme crée un nouveau slice de taille "plafond + 1".<br>
+Si le plafond restait fixé à 10, la complexité resterait O(n), car le programme doit parcourir tous les éléments de la pile. <br>
 
-`[{A 5} {B 5} {C 9}]`
-
-un tri stable donne :
-
-`[{C 9} {A 5} {B 5}]`
-
-alors qu'un tri par sélection peut donner :
-
-`[{C 9} {B 5} {A 5}]`
-
-### Capture du benchmark :
-
-![alt image](image-7.png)
-
-**Commande pour lancer le bench :**  
-`go test -bench=PlayerSorts -benchmem -run='^$'`
+**Commande pour lancer le bench V1 :** _go test -bench=CountV1 -benchmem -run='^$'_ <br>
