@@ -1,12 +1,20 @@
 package main
 
-func SearchV1(ligne []int, v int) int {
-	 gauchetab := 0
-	 droitetab := len(ligne) - 1
-	 for gauchetab <= droitetab {
+
+
+func SearchV1(ligne []int, v int) (int, error) {
+	if len(ligne) == 0 {
+		return -1, ErrEmptyPile // Vérification si la pile est vide
+	}
+	if ligne[0] > ligne[len(ligne)-1] {
+		return -1, ErrPileNotSorted
+	}
+	gauchetab := 0
+	droitetab := len(ligne) - 1
+	for gauchetab <= droitetab {
 		milieutab := (gauchetab + droitetab) / 2
 		if ligne[milieutab] == v {
-			return milieutab
+			return milieutab, nil
 		}
 		if ligne[milieutab] < v {
 			gauchetab = milieutab + 1
@@ -14,16 +22,5 @@ func SearchV1(ligne []int, v int) int {
 			droitetab = milieutab - 1
 		}
 	}
-	return -1
+	return -1, ErrValueNotFound
 }
-
-/* droite = taille(ligne) - 1
-Tant que gauche <= droite :
-    milieu = (gauche + droite) / 2
-    Si ligne[milieu] == valeur_cherchée :
-        retourner milieu
-    Sinon si ligne[milieu] < valeur_cherchée :
-        gauche = milieu + 1
-    Sinon :
-        droite = milieu - 1
-retourner -1 */
