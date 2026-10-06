@@ -86,6 +86,77 @@ func TestSmallestV2(t *testing.T) {
 
 
 
+// ------ TOWERHEIGHTV2 TESTS ------ //
+func TestTowerHeightV2(t *testing.T) {
+	testCases := []struct {
+		name    string
+		n       int
+		want    int
+		wantErr error
+	}{
+		{
+			name: "Normal",
+			n:    5,
+			want: 15,
+		},
+		{
+			name: "Zero",
+			n:    0,
+			want: 0,
+		},
+		{
+			name: "One",
+			n:    1,
+			want: 1,
+		},
+		{
+			name: "LargeValue",
+			n:    100,
+			want: 5050,
+		},
+		{
+			name:    "NegativeValue",
+			n:       -1,
+			want:    0,
+			wantErr: ErrNegativeHeight,
+		},
+		{
+			name:    "Overflow",
+			n:       int(^uint(0)>>1),
+			want:    0,
+			wantErr: ErrOverflow,
+		},
+	}
+
+	for _, test := range testCases {
+		t.Run(test.name, func(t *testing.T) {
+			got, err := TowerHeightV2(test.n)
+
+			if !errors.Is(err, test.wantErr) {
+				t.Fatalf(
+					"TowerHeightV2(%d) error = %v, want %v",
+					test.n,
+					err,
+					test.wantErr,
+				)
+			}
+
+			if got != test.want {
+				t.Errorf(
+					"TowerHeightV2(%d) = %d, want %d",
+					test.n,
+					got,
+					test.want,
+				)
+			}
+		})
+	}
+}
+
+
+
+
+
 // ------ SEARCHV1 TESTS ------ //
 func TestSearchV1(t *testing.T) {
 	testCases := []struct {
