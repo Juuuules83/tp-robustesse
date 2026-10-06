@@ -22,7 +22,7 @@ func BenchmarkSmallestV2(b *testing.B) {
 		pile := Shuffled(n) // préparation hors de la mesure
 		b.Run(fmt.Sprintf("V2/n=%d", n), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				sink = SmallestV2(pile)
+				sink, _ = SmallestV2(pile)
 			}
 		})
 	}

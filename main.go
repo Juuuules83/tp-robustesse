@@ -3,8 +3,12 @@ package main
 import "fmt"
 
 func main() {
-	pile := []int{5, 3, 8, 1, 4}
-	smallestV2 := SmallestV2(pile)
-	fmt.Println(smallestV2)
+	ligne := []int{0, 2, 4, 6, 8}
+	v := 4
+	searchV1, err := SearchV1(ligne, v)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(searchV1)
 }
-

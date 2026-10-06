@@ -1,13 +1,13 @@
 package main
 
-
-
 func SearchV1(ligne []int, v int) (int, error) {
+
 	if len(ligne) == 0 {
 		return -1, ErrEmptyPile // Vérification si la pile est vide
 	}
+
 	if ligne[0] > ligne[len(ligne)-1] {
-		return -1, ErrPileNotSorted
+		return -1, ErrPileNotSorted // pile non triée
 	}
 	gauchetab := 0
 	droitetab := len(ligne) - 1
@@ -22,5 +22,5 @@ func SearchV1(ligne []int, v int) (int, error) {
 			droitetab = milieutab - 1
 		}
 	}
-	return -1, ErrValueNotFound
+	return -1, ErrValueNotFound // valeur non trouvée
 }
