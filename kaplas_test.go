@@ -71,7 +71,8 @@ func BenchmarkCountV1(b *testing.B) {
 		pile := Random(n, n)
 		b.Run(fmt.Sprintf("V1/n=%d", n), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				sink = len(CountV1(pile, n))
+				res, _ := CountV1(pile, n)
+				sink = len(res)
 			}
 		})
 	}
