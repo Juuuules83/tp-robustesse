@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"testing"
+	"reflect"
 )
 
 
@@ -402,6 +403,207 @@ func TestFirstUniqueV1(t *testing.T) {
 					test.ligne,
 					got,
 					test.want,
+				)
+			}
+		})
+	}
+}
+
+// ------ COUNTV1 TESTS ------ //
+func TestCountV1(t *testing.T) {
+	testCases := []struct {
+		name    string
+		pile    []int
+		plafond int
+		want    []int
+		wantErr error
+	}{
+		{
+			name:    "Normal",
+			pile:    []int{0, 1, 1, 2, 2, 2},
+			plafond: 2,
+			want:    []int{1, 2, 3},
+		},
+		{
+			name:    "ZeroPlafond",
+			pile:    []int{0, 0, 0},
+			plafond: 0,
+			want:    []int{3},
+		},
+		{
+			name:    "ValuesAbovePlafond",
+			pile:    []int{0, 1, 2, 5, 7},
+			plafond: 2,
+			want:    []int{1, 1, 1},
+		},
+		{
+			name:    "EmptyInput",
+			pile:    []int{},
+			plafond: 3,
+			want:    []int{0, 0, 0, 0},
+		},
+		{
+			name:    "NilInput",
+			pile:    nil,
+			plafond: 3,
+			want:    []int{0, 0, 0, 0},
+		},
+		{
+			name:    "NegativeValue",
+			pile:    []int{1, 2, -1, 3},
+			plafond: 3,
+			want:    nil,
+			wantErr: ErrInvalid,
+		},
+		{
+			name:    "NegativePlafond",
+			pile:    []int{1, 2, 3},
+			plafond: -1,
+			want:    nil,
+			wantErr: ErrInvalid,
+		},
+		{
+			name:    "DuplicateValues",
+			pile:    []int{1, 1, 1, 2, 2},
+			plafond: 2,
+			want:    []int{0, 3, 2},
+		},
+	}
+
+	for _, test := range testCases {
+		t.Run(test.name, func(t *testing.T) {
+			got, err := CountV1(test.pile, test.plafond)
+
+			if !errors.Is(err, test.wantErr) {
+				t.Fatalf(
+					"CountV1(%v, %d) error = %v, want %v",
+					test.pile,
+					test.plafond,
+					err,
+					test.wantErr,
+				)
+			}
+
+			if !reflect.DeepEqual(got, test.want) {
+				t.Errorf(
+					"CountV1(%v, %d) = %v, want %v",
+					test.pile,
+					test.plafond,
+					got,
+					test.want,
+				)
+			}
+		})
+	}
+}
+
+// ------ TWOSUMV1 TESTS ------ //
+func TestTwoSumV1(t *testing.T) {
+	testCases := []struct {
+		name      string
+		pile      []int
+		cible     int
+		wantA     int
+		wantB     int
+		wantFound bool
+	}{
+		{
+			name:      "Normal",
+			pile:      []int{2, 7, 11, 15},
+			cible:     9,
+			wantA:     2,
+			wantB:     7,
+			wantFound: true,
+		},
+		{
+			name:      "PairAtEnd",
+			pile:      []int{1, 4, 6, 10},
+			cible:     16,
+			wantA:     6,
+			wantB:     10,
+			wantFound: true,
+		},
+		{
+			name:      "NegativeValues",
+			pile:      []int{-3, 5, 8, 2},
+			cible:     5,
+			wantA:     -3,
+			wantB:     8,
+			wantFound: true,
+		},
+		{
+			name:      "DuplicateValues",
+			pile:      []int{3, 3, 7},
+			cible:     6,
+			wantA:     3,
+			wantB:     3,
+			wantFound: true,
+		},
+		{
+			name:      "NoPair",
+			pile:      []int{1, 2, 3, 4},
+			cible:     20,
+			wantA:     0,
+			wantB:     0,
+			wantFound: false,
+		},
+		{
+			name:      "EmptyInput",
+			pile:      []int{},
+			cible:     5,
+			wantA:     0,
+			wantB:     0,
+			wantFound: false,
+		},
+		{
+			name:      "SingleElement",
+			pile:      []int{5},
+			cible:     5,
+			wantA:     0,
+			wantB:     0,
+			wantFound: false,
+		},
+		{
+			name:      "SameValueDifferentPositions",
+			pile:      []int{1, 2, 2, 4},
+			cible:     4,
+			wantA:     2,
+			wantB:     2,
+			wantFound: true,
+		},
+	}
+
+	for _, test := range testCases {
+		t.Run(test.name, func(t *testing.T) {
+			gotA, gotB, gotFound := TwoSumV1(test.pile, test.cible)
+
+			if gotA != test.wantA {
+				t.Errorf(
+					"TwoSumV1(%v, %d) first value = %d, want %d",
+					test.pile,
+					test.cible,
+					gotA,
+					test.wantA,
+				)
+			}
+
+			if gotB != test.wantB {
+				t.Errorf(
+					"TwoSumV1(%v, %d) second value = %d, want %d",
+					test.pile,
+					test.cible,
+					gotB,
+					test.wantB,
+				)
+			}
+
+			if gotFound != test.wantFound {
+				t.Errorf(
+					"TwoSumV1(%v, %d) found = %t, want %t",
+					test.pile,
+					test.cible,
+					gotFound,
+					test.wantFound,
 				)
 			}
 		})
