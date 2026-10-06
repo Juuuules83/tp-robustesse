@@ -93,7 +93,7 @@ func BenchmarkFirstUniqueV1(b *testing.B) {
 		ligne := WithTwins(n)
 		b.Run(fmt.Sprintf("V1/n=%d", n), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				sink = FirstUniqueV1(ligne)
+				sink, _ = FirstUniqueV1(ligne)
 			}
 		})
 	}

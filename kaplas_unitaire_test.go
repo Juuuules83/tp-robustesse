@@ -85,6 +85,94 @@ func TestSmallestV2(t *testing.T) {
 
 
 
+// ------ DUPLICATEV2 TESTS ------ //
+func TestDuplicateV2(t *testing.T) {
+	testCases := []struct {
+		name    string
+		pile    []int
+		want    int
+		wantErr error
+	}{
+		{
+			name: "Normal",
+			pile: []int{1, 2, 2, 3},
+			want: 2,
+		},
+		{
+			name: "DuplicateAtBeginning",
+			pile: []int{1, 1, 2, 3},
+			want: 1,
+		},
+		{
+			name: "DuplicateAtEnd",
+			pile: []int{1, 2, 3, 3},
+			want: 3,
+		},
+		{
+			name: "LargeValues",
+			pile: []int{1, 2, 3, 4, 5, 5},
+			want: 5,
+		},
+		{
+			name:    "ZeroValue",
+			pile:    []int{0, 2, 2},
+			want:    0,
+			wantErr: ErrInvalid,
+		},
+		{
+			name:    "NegativeValue",
+			pile:    []int{-1, 2, 2},
+			want:    0,
+			wantErr: ErrInvalid,
+		},
+		{
+			name:    "ValueTooLarge",
+			pile:    []int{1, 2, 4},
+			want:    0,
+			wantErr: ErrInvalid,
+		},
+		{
+			name:    "EmptyInput",
+			pile:    []int{},
+			want:    0,
+			wantErr: ErrInvalid,
+		},
+		{
+			name:    "SingleElement",
+			pile:    []int{1},
+			want:    0,
+			wantErr: ErrInvalid,
+		},
+	}
+
+	for _, test := range testCases {
+		t.Run(test.name, func(t *testing.T) {
+			got, err := DuplicateV2(test.pile)
+
+			if !errors.Is(err, test.wantErr) {
+				t.Fatalf(
+					"DuplicateV2(%v) error = %v, want %v",
+					test.pile,
+					err,
+					test.wantErr,
+				)
+			}
+
+			if got != test.want {
+				t.Errorf(
+					"DuplicateV2(%v) = %d, want %d",
+					test.pile,
+					got,
+					test.want,
+				)
+			}
+		})
+	}
+}
+
+
+
+
 
 // ------ TOWERHEIGHTV2 TESTS ------ //
 func TestTowerHeightV2(t *testing.T) {
@@ -233,6 +321,85 @@ func TestSearchV1(t *testing.T) {
 					"SearchV1(%v, %d) = %d, want %d",
 					test.ligne,
 					test.v,
+					got,
+					test.want,
+				)
+			}
+		})
+	}
+}
+
+
+// ------ FIRSTUNIQUEV1 TESTS ------ //
+func TestFirstUniqueV1(t *testing.T) {
+	testCases := []struct {
+		name    string
+		ligne   []int
+		want    int
+		wantErr error
+	}{
+		{
+			name:  "Normal",
+			ligne: []int{4, 2, 4, 3, 2},
+			want:  3,
+		},
+		{
+			name:  "FirstElementUnique",
+			ligne: []int{1, 2, 2, 3, 3},
+			want:  1,
+		},
+		{
+			name:  "LastElementUnique",
+			ligne: []int{1, 1, 2, 2, 3},
+			want:  3,
+		},
+		{
+			name:  "NegativeValues",
+			ligne: []int{-1, 2, -1, 3, 2},
+			want:  3,
+		},
+		{
+			name:  "SingleElement",
+			ligne: []int{7},
+			want:  7,
+		},
+		{
+			name:    "EmptyInput",
+			ligne:   []int{},
+			want:    0,
+			wantErr: ErrEmptyPile,
+		},
+		{
+			name:    "NilInput",
+			ligne:   nil,
+			want:    0,
+			wantErr: ErrEmptyPile,
+		},
+		{
+			name:    "NoUniqueValue",
+			ligne:   []int{1, 1, 2, 2, 3, 3},
+			want:    0,
+			wantErr: ErrValueNotFound,
+		},
+	}
+
+	for _, test := range testCases {
+		t.Run(test.name, func(t *testing.T) {
+			got, err := FirstUniqueV1(test.ligne)
+
+			if !errors.Is(err, test.wantErr) {
+				t.Fatalf(
+					"FirstUniqueV1(%v) error = %v, want %v",
+					test.ligne,
+					err,
+					test.wantErr,
+				)
+			}
+
+			if got != test.want {
+				t.Errorf(
+					"FirstUniqueV1(%v) = %d, want %d",
+					test.ligne,
 					got,
 					test.want,
 				)
