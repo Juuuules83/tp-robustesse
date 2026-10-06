@@ -1,0 +1,3 @@
+module tp-tris
+
+go 1.27.1
