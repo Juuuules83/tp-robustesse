@@ -1,7 +1,5 @@
 package main
 
-import "errors"
-
 func DuplicateV1(pile []int) int {
 
 	mapbool := make(map[int]bool)
