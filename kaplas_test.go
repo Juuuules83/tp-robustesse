@@ -42,7 +42,7 @@ func BenchmarkDuplicateV2(b *testing.B) {
 		pile := WithDuplicate(n, 3) // préparation hors de la mesure
 		b.Run(fmt.Sprintf("V2/n=%d", n), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				sink = DuplicateV2(pile)
+				sink, _ = DuplicateV2(pile)
 			}
 		})
 	}
