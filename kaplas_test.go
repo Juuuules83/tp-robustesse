@@ -60,7 +60,7 @@ func BenchmarkTowerHeightV2(b *testing.B) {
 	for _, n := range []int{1_000, 10_000, 100_000} {
 		b.Run(fmt.Sprintf("V2/n=%d", n), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				sink = TowerHeightV2(n)
+				sink, _ = TowerHeightV2(n)
 			}
 		})
 	}
